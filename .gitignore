@@ -1,6 +1,34 @@
-data/ 
-models/checkpoints/ 
-.env 
-__pycache__/ 
-*.pyc 
-.venv/ 
+# data 
+data/
+outputs/
+runs/
+logs/
+*.log
+
+# model artifacts
+models/checkpoints/
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.pkl
+*.joblib
+
+# environment / secrets
+.env
+.env.*
+.venv/
+venv/
+
+# python cache
+__pycache__/
+*.pyc
+
+# notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
