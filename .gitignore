@@ -32,3 +32,17 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+# ----------------------------
+# Dashboard runtime data
+# ----------------------------
+
+# User uploads (never commit)
+dashboard/uploads/
+
+# Do NOT commit generated artifacts (images, heatmaps, etc.)
+dashboard/results/runs/*/artifacts/
+
+# If I EVER want to ignore all runs instead of just artifacts,
+# uncomment the next line:
+# dashboard/results/
