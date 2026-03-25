@@ -1,0 +1,48 @@
+# data 
+data/
+outputs/
+runs/
+logs/
+*.log
+
+# model artifacts
+models/checkpoints/
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.pkl
+*.joblib
+
+# environment / secrets
+.env
+.env.*
+.venv/
+venv/
+
+# python cache
+__pycache__/
+*.pyc
+
+# notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ----------------------------
+# Dashboard runtime data
+# ----------------------------
+
+# User uploads (never commit)
+dashboard/uploads/
+
+# Do NOT commit generated artifacts (images, heatmaps, etc.)
+dashboard/results/runs/*/artifacts/
+
+# If I EVER want to ignore all runs instead of just artifacts,
+# uncomment the next line:
+# dashboard/results/
