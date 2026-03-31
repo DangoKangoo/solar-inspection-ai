@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional
 import pandas as pd
 import streamlit as st
 
+from ..io_results import RESULTS_ROOT
 from ..theme import risk_color
 from .cards import pill, score_bar
 
@@ -46,27 +47,37 @@ def panel_detail(run: Dict[str, Any], df_view: pd.DataFrame):
         if not path:
             st.info(empty_msg)
             return
+
         p = Path(path)
+        if not p.is_absolute():
+            run_id = run.get("run_id")
+            if run_id:
+                p = RESULTS_ROOT / run_id / p
+
         if not p.exists():
-            st.warning(f"Missing artifact: {path}")
+            st.warning(f"Missing artifact: {p}")
             return
+
         st.image(str(p), use_column_width=True)
 
     with tabs[0]:
         show_img(artifacts.get("raw"), "Raw image will appear here once backend saves it.")
 
     with tabs[1]:
-        show_img(artifacts.get("processed"), "Processed/masked image will appear here (bias mitigation proof).")
+        show_img(
+            artifacts.get("processed"),
+            "A 224x224 RGB preview of the model input will appear here once generated.",
+        )
 
     with tabs[2]:
-        show_img(artifacts.get("heatmap"), "Grad-CAM heatmap will appear here (explainability requirement).")
+        show_img(artifacts.get("heatmap"), "Grad-CAM heatmap will appear here once generated.")
 
     with tabs[3]:
         st.markdown("### Decision Logic")
         st.write(
-            "This should be rule-based and auditable. Example mapping:\n\n"
-            "- **HIGH**: probability > 0.78\n"
-            "- **MEDIUM**: 0.45–0.78\n"
+            "Current rule-based mapping used for this run:\n\n"
+            "- **HIGH**: fault probability > 0.78\n"
+            "- **MEDIUM**: 0.45-0.78\n"
             "- **LOW**: < 0.45\n"
             "- **REVIEW**: low confidence or explainability failure\n"
         )
@@ -74,8 +85,8 @@ def panel_detail(run: Dict[str, Any], df_view: pd.DataFrame):
         flags = panel.get("flags", []) or []
         st.markdown("### Flags / Exceptions")
         if flags:
-            for f in flags:
-                st.error(f)
+            for flag in flags:
+                st.error(flag)
         else:
             st.success("No flags")
 

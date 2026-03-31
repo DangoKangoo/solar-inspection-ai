@@ -12,8 +12,11 @@ import matplotlib.pyplot as plt
 
 IMAGE_SIZE = [224, 224]
 
-trainFolder = Path("./train")
-validateFolder = Path("./val")
+trainFolder = Path("data/Faulty_solar_panel/train")
+validateFolder = Path("data/Faulty_solar_panel/val")
+CHECKPOINT_DIR = Path("models/checkpoints")
+CHECKPOINT_PATH = CHECKPOINT_DIR / "TestModel.pth"
+LABELS_PATH = CHECKPOINT_DIR / "classes.txt"
 
 resNet = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1) 
 resNet.fc = nn.Identity() 
@@ -169,5 +172,7 @@ plt.plot(result.history["val_loss"], label="valLoss")
 plt.legend()
 plt.show()
 
-# Save the model
-torch.save(model.state_dict(), "./TestModel.pth")
+# Save the model + label order expected by inference
+CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+torch.save(model.state_dict(), CHECKPOINT_PATH)
+LABELS_PATH.write_text("\n".join(trainingDataset.classes) + "\n", encoding="utf-8")

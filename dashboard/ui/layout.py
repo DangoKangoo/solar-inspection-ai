@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 import streamlit as st
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from .theme import APP_TITLE, RISK_ORDER
 from .io_results import list_runs
@@ -14,15 +13,15 @@ from .components.panel_view import panel_detail as panel_detail_component
 
 def run_to_df(run: Dict[str, Any]) -> pd.DataFrame:
     rows = []
-    for p in run.get("panels", []):
+    for panel in run.get("panels", []):
         rows.append(
             {
-                "image_id": p.get("image_id"),
-                "risk_level": (p.get("risk_level") or "").upper(),
-                "predicted_class": p.get("predicted_class"),
-                "fault_probability": p.get("fault_probability", 0.0),
-                "confidence": p.get("confidence", 0.0),
-                "flags": ", ".join(p.get("flags", [])) if p.get("flags") else "",
+                "image_id": panel.get("image_id"),
+                "risk_level": (panel.get("risk_level") or "").upper(),
+                "predicted_class": panel.get("predicted_class"),
+                "fault_probability": panel.get("fault_probability", 0.0),
+                "confidence": panel.get("confidence", 0.0),
+                "flags": ", ".join(panel.get("flags", [])) if panel.get("flags") else "",
             }
         )
 
@@ -36,11 +35,14 @@ def run_to_df(run: Dict[str, Any]) -> pd.DataFrame:
 
 def sidebar_controls(df: pd.DataFrame) -> Dict[str, Any]:
     st.sidebar.markdown(f"### {APP_TITLE}")
-    st.sidebar.markdown('<div class="small-muted">Inspection console • decision support</div>', unsafe_allow_html=True)
+    st.sidebar.markdown('<div class="small-muted">Inspection console | decision support</div>', unsafe_allow_html=True)
     st.sidebar.divider()
 
     runs = list_runs()
-    run_id = st.sidebar.selectbox("Run", runs, index=0)
+    selected_run = st.session_state.get("selected_run_id")
+    if selected_run not in runs:
+        st.session_state["selected_run_id"] = runs[0]
+    run_id = st.sidebar.selectbox("Run", runs, key="selected_run_id")
 
     st.sidebar.subheader("Filters")
     risk_filter = st.sidebar.multiselect(
@@ -135,10 +137,10 @@ def overview_row(run: Dict[str, Any], df_all: pd.DataFrame, df_view: pd.DataFram
         st.subheader("Model / Run")
         model = run.get("model", {})
         st.write(
-            f"**Run:** `{run.get('run_id','-')}`  \n"
-            f"**Model:** `{model.get('name','-')}`  \n"
-            f"**Framework:** `{model.get('framework','-')}`  \n"
-            f"**Version:** `{model.get('version','-')}`"
+            f"**Run:** `{run.get('run_id', '-')}`  \n"
+            f"**Model:** `{model.get('name', '-')}`  \n"
+            f"**Framework:** `{model.get('framework', '-')}`  \n"
+            f"**Version:** `{model.get('version', '-')}`"
         )
 
 
