@@ -7,10 +7,7 @@ runs/
 logs/
 *.log
 
-# model artifacts
-models/checkpoints/
-*.pt
-*.pth
+# model artifacts (keep models/checkpoints/ tracked for portability)
 *.onnx
 *.tflite
 *.pkl
